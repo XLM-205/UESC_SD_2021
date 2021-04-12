@@ -30,6 +30,7 @@ def process_request(con):
 
     con.close()
     print("Processing ended")
+    
 
 
 def listen(port):
@@ -48,8 +49,9 @@ def listen(port):
             thread.start()
             print("Thread deployed\n")
 
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, SystemExit):
             sock.close()
+            pass
 
 
 if __name__ == '__main__':
