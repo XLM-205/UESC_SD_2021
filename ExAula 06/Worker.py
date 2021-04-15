@@ -63,13 +63,23 @@ def beacon(port):
         except (KeyboardInterrupt, SystemExit, ConnectionRefusedError):
             print(f"Connection failed or denied. Retying in {error_wait}s")
             sleep(error_wait)
-            #sock.close()
             print("\t> Trying to connect to the HUB")
             pass
-    print(f"[{hub_id} @{worker_addrss[0]}:{worker_addrss[1]}] Waiting data from HUB...")
-    while True:
-        in_data = sock.recv(1024).decode("UTF-8")
-        print(in_data)
+    print(f"[{hub_id} @{worker_addrss[0]}:{worker_addrss[1]}] Waiting a client to connect...")
+
+    # Ending last socket and creating a new one to be a server
+    sock.close()
+    sock = socket()
+    sock.bind(worker_addrss)
+    sock.listen()
+    try:
+        connection, source = sock.accept()
+        while True:
+            in_data = connection.recv(1024).decode("UTF-8")
+            print(in_data)
+
+    except:
+        pass
 
 
 if __name__ == '__main__':

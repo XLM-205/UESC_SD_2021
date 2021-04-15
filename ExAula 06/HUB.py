@@ -41,17 +41,18 @@ def mapper(hub_addrss):
                     out_data += str(server_info[0][idex + 1])
                     connection.sendall(bytes(out_data, "UTF-8"))
                     sleep(0.5)
-                print("Done. Waiting response...")
-                in_data = connection.recv(128).decode("UTF-8").split(" ")
-                if in_data[0] == "connect":  # <connect> <server name> <message>
-                    print(f"Incoming connection request to {in_data[1]}")
-                    msg = ""
-                    for s in in_data[2:]:
-                        msg += s + " "
-                    name_resolver(server_info, in_data[1], msg)
+                print("Done")
+                #in_data = connection.recv(128).decode("UTF-8").split(" ")
+                #if in_data[0] == "connect":  # <connect> <server name> <message>
+                #    print(f"Incoming connection request to {in_data[1]}")
+                #    msg = ""
+                #    for s in in_data[2:]:
+                #        msg += s + " "
+                #    name_resolver(server_info, in_data[1], msg)
 
             else:
                 print(f"Invalid identifier! Got {in_data}")
+
         except (KeyboardInterrupt, SystemExit):
             sock.close()
             pass

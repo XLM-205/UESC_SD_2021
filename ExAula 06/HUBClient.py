@@ -2,6 +2,17 @@ from socket import socket
 from threading import Thread
 from time import sleep
 
+def get_socket_to_svr(svr_list, target):
+    for i in range(len(svr_list[0])):
+        svr_name = svr_list[0][i]
+        svr_addrss = svr_list[1][i]
+        if svr_name == target:
+            sock = socket()
+            sock.connect(svr_addrss)
+            print(f"Connected to {svr_name} @{svr_addrss[0]}:{svr_addrss[1]}")
+            return sock
+    print(f"Server {target} was not found in the availability list!")
+
 
 def process(svr_info, data, self_id):
     def_buf = 1024
@@ -30,6 +41,7 @@ def process(svr_info, data, self_id):
 
 
 def con_hub():
+    av_svr = [[], []]
     hub_addrss = ("127.0.0.1", 3000)
     try:
         sock = socket()
@@ -42,10 +54,21 @@ def con_hub():
             in_data = sock.recv(1024).decode("UTF-8").split(" ")
             sleep(0.5)
             print(f"\t* [{in_data[0]}] @{in_data[1]}:{in_data[2]}")
-        print("Connect to which server? ")
-        svr = "connect " + str(input())
-        print(svr)
-        sock.sendall(bytes(svr, "UTF-8"))
+            temp = (in_data[1], int(in_data[2]))
+            av_svr[0].append(in_data[0])
+            av_svr[1].append(temp)
+        sock.close()
+        sock = None
+        svr = ""
+        while sock is None:
+            print("Connect to which server? ")
+            svr = str(input())
+            sock = get_socket_to_svr(av_svr, svr)
+        while True:
+            print(f"> Message to send to {svr}:")
+            msg = str(input())
+            sock.sendall(bytes(msg, "UTF-8"))
+
     except ConnectionRefusedError:
         print("HUB is unavailable")
 
